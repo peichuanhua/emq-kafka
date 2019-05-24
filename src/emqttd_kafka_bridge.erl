@@ -93,15 +93,33 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
                         topic   = Topic,
                         payload = Payload
 						}, _Env) ->
-    io:format("publish ~s~n", [emqttd_message:format(Message)]),
-    Str1 = <<"{\"topic\":\"">>,
-    Str2 = <<"\", \"message\":[">>,
-    Str3 = <<"]}">>,
-    Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>,
-	{ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values),
-    ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic),
-    ekaf:produce_async(ProduceTopic, Str4),	
-    {ok, Message}.
+    TopicFilter = proplists:get_value(topic_filter, Values),
+    if 
+        string:equal("*", TopicFilter) ->
+            io:format("publish ~s~n", [emqttd_message:format(Message)]);
+            Str1 = <<"{\"topic\":\"">>;
+            Str2 = <<"\", \"message\":[">>;
+            Str3 = <<"]}">>;
+            Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>;
+            {ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values);
+            ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic);
+            ekaf:produce_async(ProduceTopic, Str4);
+            {ok, Message}
+        true ->
+            index = string:str(topic, TopicFilter),
+            if
+                index == 1 ->
+                io:format("publish ~s~n", [emqttd_message:format(Message)]);
+                Str1 = <<"{\"topic\":\"">>;
+                Str2 = <<"\", \"message\":[">>;
+                Str3 = <<"]}">>;
+                Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>;
+                {ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values);
+                ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic);
+                ekaf:produce_async(ProduceTopic, Str4);
+                {ok, Message}
+            end;
+    end.
 
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
