@@ -101,12 +101,12 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
 	{ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values),
     ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic),
     TopicFilter = application:get_env(topic_filter, values),
-    %Index = string:str(Topic, TopicFilter),
+    Index = string:str(Topic, TopicFilter),
     if 
         "*" == TopicFilter ->
+            ekaf:produce_async(ProduceTopic, Str4);
+        Index == 1 ->
             ekaf:produce_async(ProduceTopic, Str4)
-        %Index == 1 ->
-        %    ekaf:produce_async(ProduceTopic, Str4)
     end,
     {ok, Message}.
 
