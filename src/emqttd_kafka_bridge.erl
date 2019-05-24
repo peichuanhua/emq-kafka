@@ -93,14 +93,14 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
                         topic   = Topic,
                         payload = Payload
 						}, _Env) ->
-    TopicFilter = proplists:get_value(topic_filter, Values),
     io:format("publish ~s~n", [emqttd_message:format(Message)]),
     Str1 = <<"{\"topic\":\"">>,
     Str2 = <<"\", \"message\":[">>,
     Str3 = <<"]}">>,
     Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>,
-    {ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values),
+	{ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values),
     ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic),
+    TopicFilter = proplists:get_value(topic_filter, Values),
     Index = string:str(Topic, TopicFilter),
     if 
         "*" == TopicFilter ->
