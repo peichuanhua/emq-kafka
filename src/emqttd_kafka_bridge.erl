@@ -104,7 +104,7 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
     %Index = string:str(Topic, TopicFilter),
     if 
         "*" == TopicFilter ->
-            ekaf:produce_async(ProduceTopic, Str4);
+            ekaf:produce_async(ProduceTopic, Str4)
         %Index == 1 ->
         %    ekaf:produce_async(ProduceTopic, Str4)
     end,
