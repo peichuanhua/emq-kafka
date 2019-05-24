@@ -100,8 +100,8 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
     Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>,
 	{ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values),
     ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic),
-    TopicFilter = application:get_env(topic_filter, values),
-    Index = string:str(Topic, TopicFilter),
+    TopicFilter = proplists:get_value(topic_filter, KafkaTopic),
+    Index = string:str(binary_to_list(Topic), TopicFilter),
     if 
         "*" == TopicFilter ->
             ekaf:produce_async(ProduceTopic, Str4);
