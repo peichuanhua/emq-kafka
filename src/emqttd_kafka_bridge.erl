@@ -107,7 +107,7 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
             ekaf:produce_async(ProduceTopic, Str4);
         Index == 1 ->
             ekaf:produce_async(ProduceTopic, Str4)
-    end
+    end,
     {ok, Message}.
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
