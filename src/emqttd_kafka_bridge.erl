@@ -103,8 +103,7 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
             Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>;
             {ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values);
             ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic);
-            ekaf:produce_async(ProduceTopic, Str4);
-            {ok, Message}
+            ekaf:produce_async(ProduceTopic, Str4)
         true ->
             index = string:str(topic, TopicFilter),
             if
@@ -116,10 +115,10 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
                 Str4 = <<Str1/binary, Topic/binary, Str2/binary, Payload/binary, Str3/binary>>;
                 {ok, KafkaTopic} = application:get_env(emqttd_kafka_bridge, values);
                 ProduceTopic = proplists:get_value(kafka_producer_topic, KafkaTopic);
-                ekaf:produce_async(ProduceTopic, Str4);
-                {ok, Message}
-            end;
-    end.
+                ekaf:produce_async(ProduceTopic, Str4)
+            end
+    end
+    {ok, Message}.
 
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
