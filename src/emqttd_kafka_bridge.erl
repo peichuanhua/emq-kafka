@@ -106,7 +106,9 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
         "*" == TopicFilter ->
             ekaf:produce_async(ProduceTopic, Str4);
         Index == 1 ->
-            ekaf:produce_async(ProduceTopic, Str4)
+            ekaf:produce_async(ProduceTopic, Str4);
+	true ->
+	   str = <<"none">>
     end,
     {ok, Message}.
 
