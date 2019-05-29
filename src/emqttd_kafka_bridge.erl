@@ -108,7 +108,7 @@ on_message_publish(Message = #mqtt_message{pktid   = PkgId,
         Index == 1 ->
             ekaf:produce_async(ProduceTopic, Str4);
 	true ->
-	   str = "none of"
+	    io:fwrite("Hello, world!\n")
     end,
     {ok, Message}.
 
